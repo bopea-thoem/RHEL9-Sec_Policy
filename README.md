@@ -190,25 +190,25 @@ Sets the maximum time allowed for a login attempt before it is terminated.
 
 All values are defined in `roles/password_policy/defaults/main.yml` and can be overridden via `--extra-vars`, `group_vars`, or `host_vars`.
 
-| Variable                  | Default | Used In                          |
-|---------------------------|---------|----------------------------------|
-| `pwquality_minlen`        | 12      | `/etc/security/pwquality.conf`   |
-| `pwquality_minclass`      | 4       | `/etc/security/pwquality.conf`   |
-| `pwquality_dictcheck`     | 1       | `/etc/security/pwquality.conf`   |
-| `pwquality_dcredit`       | -1      | `/etc/security/pwquality.conf`   |
-| `pwquality_ucredit`       | -1      | `/etc/security/pwquality.conf`   |
-| `pwquality_lcredit`       | -1      | `/etc/security/pwquality.conf`   |
-| `pwquality_ocredit`       | -1      | `/etc/security/pwquality.conf`   |
-| `pwquality_maxrepeat`     | 1       | `/etc/security/pwquality.conf`   |
+| Variable                  | Default | Used In                            |
+|---------------------------|---------|------------------------------------|
+| `pwquality_minlen`        | 12      | `/etc/security/pwquality.conf`     |
+| `pwquality_minclass`      | 4       | `/etc/security/pwquality.conf`     |
+| `pwquality_dictcheck`     | 1       | `/etc/security/pwquality.conf`     |
+| `pwquality_dcredit`       | -1      | `/etc/security/pwquality.conf`     |
+| `pwquality_ucredit`       | -1      | `/etc/security/pwquality.conf`     |
+| `pwquality_lcredit`       | -1      | `/etc/security/pwquality.conf`     |
+| `pwquality_ocredit`       | -1      | `/etc/security/pwquality.conf`     |
+| `pwquality_maxrepeat`     | 1       | `/etc/security/pwquality.conf`     |
 | `faillock_deny`           | 6       | `/etc/security/faillock.conf`, PAM |
 | `faillock_fail_interval`  | 900     | `/etc/security/faillock.conf`, PAM |
 | `faillock_unlock_time`    | 300     | `/etc/security/faillock.conf`, PAM |
-| `pass_min_days`           | 1       | `/etc/login.defs`                |
-| `pass_max_days`           | 90      | `/etc/login.defs`                |
-| `pass_min_len`            | 12      | `/etc/login.defs`                |
-| `pass_max_len`            | 12      | `/etc/login.defs`                |
-| `login_timeout`           | 30      | `/etc/login.defs`                |
-| `password_remember`       | 4       | `/etc/pam.d/system-auth`         |
+| `pass_min_days`           | 1       | `/etc/login.defs`                  |
+| `pass_max_days`           | 90      | `/etc/login.defs`                  |
+| `pass_min_len`            | 12      | `/etc/login.defs`                  |
+| `pass_max_len`            | 12      | `/etc/login.defs`                  |
+| `login_timeout`           | 30      | `/etc/login.defs`                  |
+| `password_remember`       | 4       | `/etc/pam.d/system-auth`           |
 
 ---
 

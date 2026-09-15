@@ -2,14 +2,83 @@
 # ========================================================================
 # 1. Password Complexity - /etc/security/pwquality.conf
 # ========================================================================
-- name: Configure password complexity (pwquality.conf)
-  ansible.builtin.template:
-    src: pwquality.conf.j2
-    dest: /etc/security/pwquality.conf
-    owner: root
-    group: root
-    mode: "0644"
+- name: Set minlen in pwquality.conf
+  ansible.builtin.lineinfile:
+    path: /etc/security/pwquality.conf
+    regexp: '^#?\s*minlen\s*='
+    line: "minlen = {{ pwquality_minlen }}"
+    state: present
     backup: true
+  tags:
+    - password_complexity
+    - pwquality
+
+- name: Set minclass in pwquality.conf
+  ansible.builtin.lineinfile:
+    path: /etc/security/pwquality.conf
+    regexp: '^#?\s*minclass\s*='
+    line: "minclass = {{ pwquality_minclass }}"
+    state: present
+  tags:
+    - password_complexity
+    - pwquality
+
+- name: Set dictcheck in pwquality.conf
+  ansible.builtin.lineinfile:
+    path: /etc/security/pwquality.conf
+    regexp: '^#?\s*dictcheck\s*='
+    line: "dictcheck = {{ pwquality_dictcheck }}"
+    state: present
+  tags:
+    - password_complexity
+    - pwquality
+
+- name: Set dcredit in pwquality.conf
+  ansible.builtin.lineinfile:
+    path: /etc/security/pwquality.conf
+    regexp: '^#?\s*dcredit\s*='
+    line: "dcredit = {{ pwquality_dcredit }}"
+    state: present
+  tags:
+    - password_complexity
+    - pwquality
+
+- name: Set ucredit in pwquality.conf
+  ansible.builtin.lineinfile:
+    path: /etc/security/pwquality.conf
+    regexp: '^#?\s*ucredit\s*='
+    line: "ucredit = {{ pwquality_ucredit }}"
+    state: present
+  tags:
+    - password_complexity
+    - pwquality
+
+- name: Set lcredit in pwquality.conf
+  ansible.builtin.lineinfile:
+    path: /etc/security/pwquality.conf
+    regexp: '^#?\s*lcredit\s*='
+    line: "lcredit = {{ pwquality_lcredit }}"
+    state: present
+  tags:
+    - password_complexity
+    - pwquality
+
+- name: Set ocredit in pwquality.conf
+  ansible.builtin.lineinfile:
+    path: /etc/security/pwquality.conf
+    regexp: '^#?\s*ocredit\s*='
+    line: "ocredit = {{ pwquality_ocredit }}"
+    state: present
+  tags:
+    - password_complexity
+    - pwquality
+
+- name: Set maxrepeat in pwquality.conf
+  ansible.builtin.lineinfile:
+    path: /etc/security/pwquality.conf
+    regexp: '^#?\s*maxrepeat\s*='
+    line: "maxrepeat = {{ pwquality_maxrepeat }}"
+    state: present
   tags:
     - password_complexity
     - pwquality
@@ -17,14 +86,33 @@
 # ========================================================================
 # 2. Security Faillock - /etc/security/faillock.conf
 # ========================================================================
-- name: Configure account lockout (faillock.conf)
-  ansible.builtin.template:
-    src: faillock.conf.j2
-    dest: /etc/security/faillock.conf
-    owner: root
-    group: root
-    mode: "0644"
+- name: Set deny in faillock.conf
+  ansible.builtin.lineinfile:
+    path: /etc/security/faillock.conf
+    regexp: '^#?\s*deny\s*='
+    line: "deny = {{ faillock_deny }}"
+    state: present
     backup: true
+  tags:
+    - faillock
+    - account_lockout
+
+- name: Set fail_interval in faillock.conf
+  ansible.builtin.lineinfile:
+    path: /etc/security/faillock.conf
+    regexp: '^#?\s*fail_interval\s*='
+    line: "fail_interval = {{ faillock_fail_interval }}"
+    state: present
+  tags:
+    - faillock
+    - account_lockout
+
+- name: Set unlock_time in faillock.conf
+  ansible.builtin.lineinfile:
+    path: /etc/security/faillock.conf
+    regexp: '^#?\s*unlock_time\s*='
+    line: "unlock_time = {{ faillock_unlock_time }}"
+    state: present
   tags:
     - faillock
     - account_lockout
