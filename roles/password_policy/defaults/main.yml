@@ -1,0 +1,28 @@
+---
+# Default variables for password_policy role
+# Override these via group_vars, host_vars, or --extra-vars
+
+# --- Password Complexity (pwquality) ---
+pwquality_minlen: 12
+pwquality_minclass: 4
+pwquality_dictcheck: 1
+pwquality_dcredit: -1
+pwquality_ucredit: -1
+pwquality_lcredit: -1
+pwquality_ocredit: -1
+pwquality_maxrepeat: 1
+
+# --- Faillock ---
+faillock_deny: 6
+faillock_fail_interval: 900
+faillock_unlock_time: 300
+
+# --- Password Age (login.defs) ---
+pass_min_days: 1
+pass_max_days: 90
+pass_min_len: 12
+pass_max_len: 12
+login_timeout: 30
+
+# --- Password History ---
+password_remember: 4

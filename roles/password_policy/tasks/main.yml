@@ -1,0 +1,145 @@
+---
+# ========================================================================
+# 1. Password Complexity - /etc/security/pwquality.conf
+# ========================================================================
+- name: Configure password complexity (pwquality.conf)
+  ansible.builtin.template:
+    src: pwquality.conf.j2
+    dest: /etc/security/pwquality.conf
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true
+  tags:
+    - password_complexity
+    - pwquality
+
+# ========================================================================
+# 2. Security Faillock - /etc/security/faillock.conf
+# ========================================================================
+- name: Configure account lockout (faillock.conf)
+  ansible.builtin.template:
+    src: faillock.conf.j2
+    dest: /etc/security/faillock.conf
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true
+  tags:
+    - faillock
+    - account_lockout
+
+# ========================================================================
+# 3. Password Age - /etc/login.defs
+# ========================================================================
+- name: Set PASS_MIN_DAYS in login.defs
+  ansible.builtin.lineinfile:
+    path: /etc/login.defs
+    regexp: '^PASS_MIN_DAYS'
+    line: "PASS_MIN_DAYS\t{{ pass_min_days }}"
+    state: present
+  tags:
+    - password_age
+
+- name: Set PASS_MAX_DAYS in login.defs
+  ansible.builtin.lineinfile:
+    path: /etc/login.defs
+    regexp: '^PASS_MAX_DAYS'
+    line: "PASS_MAX_DAYS\t{{ pass_max_days }}"
+    state: present
+  tags:
+    - password_age
+
+# ========================================================================
+# 4. Password Length - /etc/login.defs
+# ========================================================================
+- name: Set PASS_MIN_LEN in login.defs
+  ansible.builtin.lineinfile:
+    path: /etc/login.defs
+    regexp: '^PASS_MIN_LEN'
+    line: "PASS_MIN_LEN\t{{ pass_min_len }}"
+    state: present
+  tags:
+    - password_length
+
+- name: Remove any existing PASS_MAX_LEN from login.defs
+  ansible.builtin.lineinfile:
+    path: /etc/login.defs
+    regexp: '^PASS_MAX_LEN'
+    state: absent
+  tags:
+    - password_length
+
+- name: Add PASS_MAX_LEN to login.defs
+  ansible.builtin.lineinfile:
+    path: /etc/login.defs
+    line: "PASS_MAX_LEN\t{{ pass_max_len }}"
+    state: present
+    insertafter: EOF
+  tags:
+    - password_length
+
+# ========================================================================
+# 5. Password History - /etc/pam.d/system-auth
+# ========================================================================
+- name: Ensure remember={{ password_remember }} is set on pam_unix.so in system-auth
+  ansible.builtin.replace:
+    path: /etc/pam.d/system-auth
+    regexp: '(password\s+.*pam_unix\.so.*)(?<!\bremember=\d+)$'
+    replace: '\1 remember={{ password_remember }}'
+    backup: true
+  tags:
+    - password_history
+
+# ========================================================================
+# 6. Account Lockout via PAM faillock - /etc/pam.d/system-auth
+# ========================================================================
+- name: Check if pam_faillock.so is already configured in system-auth
+  ansible.builtin.shell:
+    cmd: grep -q "pam_faillock.so" /etc/pam.d/system-auth
+  register: faillock_check
+  changed_when: false
+  failed_when: false
+  tags:
+    - account_lockout
+
+- name: Add pam_faillock.so entries to system-auth
+  ansible.builtin.blockinfile:
+    path: /etc/pam.d/system-auth
+    block: |
+      auth required pam_faillock.so preauth silent deny={{ faillock_deny }} unlock_time={{ faillock_unlock_time }} fail_interval={{ faillock_fail_interval }}
+      auth [success=1 default=bad] pam_unix.so
+      auth [default=die] pam_faillock.so authfail deny={{ faillock_deny }} unlock_time={{ faillock_unlock_time }} fail_interval={{ faillock_fail_interval }}
+      account required pam_faillock.so
+    marker: "# {mark} ANSIBLE MANAGED - PAM FAILLOCK"
+    insertafter: EOF
+    backup: true
+  when: faillock_check.rc != 0
+  tags:
+    - account_lockout
+
+# ========================================================================
+# 7. Account Logout Duration - /etc/systemd/logind.conf
+# ========================================================================
+- name: Enable KillUserProcesses in logind.conf
+  ansible.builtin.lineinfile:
+    path: /etc/systemd/logind.conf
+    regexp: '^#?KillUserProcesses='
+    line: "KillUserProcesses=yes"
+    state: present
+    backup: true
+  notify: Restart systemd-logind
+  tags:
+    - session_logout
+
+# ========================================================================
+# 8. Login Timeout - /etc/login.defs
+# ========================================================================
+- name: Set LOGIN_TIMEOUT in login.defs
+  ansible.builtin.lineinfile:
+    path: /etc/login.defs
+    regexp: '^LOGIN_TIMEOUT'
+    line: "LOGIN_TIMEOUT\t{{ login_timeout }}"
+    state: present
+  tags:
+    - login_timeout
